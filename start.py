@@ -4,7 +4,7 @@ import numpy as np
 import os
 import pickle
 trainset = WellDataset(
-    well_base_path="path\\to\\base\\datasets",
+    well_base_path="path//to//base//datasets",
     well_dataset_name="active_matter",
     well_split_name="train"
 )
@@ -13,14 +13,14 @@ train_loader = DataLoader(trainset)
 k = 20
 count = 0
 
-results_dir = "svd_results"
+results_dir = "/Users/davidzoro/USB_HDD/svd_results"
 os.makedirs(results_dir, exist_ok=True)
 
 for batch in train_loader:
     count += 1
     per_field_in = []  # Reset for each batch
     per_field_out = []  # Reset for each batch
-    
+
     for i in range(11):
         # Process input field
         input_field = batch["input_fields"][:, :, :, :, i]
@@ -54,7 +54,8 @@ for batch in train_loader:
     
     # Clear batch data from memory
     del batch_reconstructed_inputs, batch_reconstructed_outputs, per_field_in, per_field_out
-    
+    if count == 13400:
+        break
 
 
 # Create results directory if it doesn't exist
