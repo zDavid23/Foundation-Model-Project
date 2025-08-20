@@ -1,4 +1,3 @@
-from the_well.data import WellDataset
 from torch.utils.data import DataLoader
 import numpy as np
 import os
@@ -6,7 +5,7 @@ import pickle
 import gc
 
 k = 10
-count = 750
+count = 13999
 
 results_dir = "D:\\New folder"
 os.makedirs(results_dir, exist_ok=True)
@@ -65,32 +64,44 @@ else:
     print("No data loaded")
     exit()
 
-print("Performing SVD for all data...")
-# Perform SVD for all data
-U_in, s_in, V_in = np.linalg.svd(all_inputs, full_matrices=False)
-U_out, s_out, V_out = np.linalg.svd(all_outputs, full_matrices=False)
 
-# Save SVD results
+print("Performing SVD per field (column)...")
 svd_results = {
-    "U_in": U_in[:, :k],
-    "s_in": s_in[:k],
-    "V_in": V_in[:k, :],
+    "inputs": {},
+    "outputs": {},
     "all_inputs": all_inputs,
-    "all_outputs": all_outputs,
-    "U_out": U_out[:, :k],
-    "s_out": s_out[:k],
-    "V_out": V_out[:k, :]
+    "all_outputs": all_outputs
 }
 
+# SVD per field for inputs
+for i in range(all_inputs.shape[1]):
+    field_data = all_inputs[:, i].reshape(-1, 1)
+    U, s, V = np.linalg.svd(field_data, full_matrices=False)
+    svd_results["inputs"][f"field_{i}"] = {
+        "U": U[:, :k],
+        "s": s[:k],
+        "V": V[:k, :]
+    }
+
+# SVD per field for outputs
+for i in range(all_outputs.shape[1]):
+    field_data = all_outputs[:, i].reshape(-1, 1)
+    U, s, V = np.linalg.svd(field_data, full_matrices=False)
+    svd_results["outputs"][f"field_{i}"] = {
+        "U": U[:, :k],
+        "s": s[:k],
+        "V": V[:k, :]
+    }
+
 # Clear intermediate variables to free memory
-del all_inputs, all_outputs, U_in, s_in, V_in, U_out, s_out, V_out
+del all_inputs, all_outputs, U, s, V, field_data
 gc.collect()  # Force garbage collection
 
 print("Data processing complete.")
 
 # Save the final results
 print("Saving SVD results...")
-with open(os.path.join(results_dir, "svd_results.pkl"), "wb") as f:
+with open(os.path.join(results_dir, "svd_results_per_field.pkl"), "wb") as f:
     pickle.dump(svd_results, f)
 
-print("Global SVD complete.")
+print("Per-field SVD complete.")
