@@ -10,11 +10,11 @@ matplotlib.use('TkAgg') # or 'Qt5Agg', 'WXAgg', etc.
 import dask.array as da
 import matplotlib.pyplot as plt
 import scipy.io
-trainset = WellDataset( well_base_path="E:\Datasets\datasets", well_dataset_name="active_matter", well_split_name="train")
+trainset = WellDataset( well_base_path="/Volumes/USB-HDD/Datasets/datasets/", well_dataset_name="active_matter", well_split_name="train")
 train_loader = DataLoader(trainset)
 k = 20
 count = 0
-results_dir = "E:"
+results_dir = "/Volumes/USB-HDD/Datasets/datasets/"
 per_batch_in = np.zeros((4, 14000, 256*256), dtype = np.uint8) # Reset for each batch
 per_batch_out = np.zeros((4, 14000, 256*256), dtype=np.uint8) # Reset for each batch
 count = 0
@@ -31,5 +31,5 @@ for batch in train_loader:
         del inputs_data, output_data 
 # Create results directory if it doesn't exist
 for field_idx in range(4): # Load all batches for the current field 
-    scipy.io.savemat(f"output_matrix_{field_idx}.mat", {f"Matrix_1_active_matter_in_{field_idx}": per_batch_in[field_idx, :, :], f"Matrix_1_active_matter_out_{field_idx}" : per_batch_out[field_idx,:,:]})
+    scipy.io.savemat(f"/Users/davidzoro/matrix_files/output_matrix_{field_idx}.mat", {f"Matrix_1_active_matter_in_{field_idx}": per_batch_in[field_idx, :, :], f"Matrix_1_active_matter_out_{field_idx}" : per_batch_out[field_idx,:,:]})
 print("Field-wise global SVD complete.")
